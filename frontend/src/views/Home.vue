@@ -2,8 +2,10 @@
   <div class="home-container">
     <!-- 顶部导航栏 -->
     <nav class="navbar">
-      <div class="nav-brand">MIROFISH</div>
+      <div class="nav-brand">渔知</div>
       <div class="nav-links">
+        <span class="user-info">{{ currentUser?.username }}</span>
+        <button @click="handleLogout" class="logout-btn">退出登录</button>
         <a href="https://github.com/666ghj/MiroFish" target="_blank" class="github-link">
           访问我们的Github主页 <span class="arrow">↗</span>
         </a>
@@ -26,10 +28,10 @@
           
           <div class="hero-desc">
             <p>
-              即使只有一段文字，<span class="highlight-bold">MiroFish</span> 也能基于其中的现实种子，全自动生成与之对应的至多<span class="highlight-orange">百万级Agent</span>构成的平行世界。通过上帝视角注入变量，在复杂的群体交互中寻找动态环境下的<span class="highlight-code">“局部最优解”</span>
+              即使只有一段文字，<span class="highlight-bold">渔知</span> 也能基于其中的现实种子，全自动生成与之对应的至多<span class="highlight-orange">百万级Agent</span>构成的平行世界。通过上帝视角注入变量，在复杂的群体交互中寻找动态环境下的<span class="highlight-code">“局部最优解”</span>
             </p>
             <p class="slogan-text">
-              让未来在 Agent 群中预演，让决策在百战后胜出<span class="blinking-cursor">_</span>
+              提取与创造，群体智能之海<span class="blinking-cursor">_</span>
             </p>
           </div>
            
@@ -207,11 +209,14 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import HistoryDatabase from '../components/HistoryDatabase.vue'
 
 const router = useRouter()
+
+// 用户信息
+const currentUser = ref(null)
 
 // 表单数据
 const formData = ref({
@@ -233,6 +238,21 @@ const fileInput = ref(null)
 const canSubmit = computed(() => {
   return formData.value.simulationRequirement.trim() !== '' && files.value.length > 0
 })
+
+// 初始化用户信息
+onMounted(() => {
+  const userStr = localStorage.getItem('user')
+  if (userStr) {
+    currentUser.value = JSON.parse(userStr)
+  }
+})
+
+// 退出登录
+const handleLogout = () => {
+  localStorage.removeItem('token')
+  localStorage.removeItem('user')
+  router.push('/auth')
+}
 
 // 触发文件选择
 const triggerFileInput = () => {
@@ -351,6 +371,31 @@ const startSimulation = () => {
 .nav-links {
   display: flex;
   align-items: center;
+  gap: 20px;
+}
+
+.user-info {
+  color: var(--white);
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.logout-btn {
+  background: transparent;
+  color: var(--white);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  padding: 6px 16px;
+  border-radius: 4px;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.logout-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.5);
 }
 
 .github-link {

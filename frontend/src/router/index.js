@@ -5,48 +5,72 @@ import SimulationView from '../views/SimulationView.vue'
 import SimulationRunView from '../views/SimulationRunView.vue'
 import ReportView from '../views/ReportView.vue'
 import InteractionView from '../views/InteractionView.vue'
+import Auth from '../views/Auth.vue'
 
 const routes = [
   {
     path: '/',
     name: 'Home',
-    component: Home
+    component: Home,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/auth',
+    name: 'Auth',
+    component: Auth
   },
   {
     path: '/process/:projectId',
     name: 'Process',
     component: Process,
-    props: true
+    props: true,
+    meta: { requiresAuth: true }
   },
   {
     path: '/simulation/:simulationId',
     name: 'Simulation',
     component: SimulationView,
-    props: true
+    props: true,
+    meta: { requiresAuth: true }
   },
   {
     path: '/simulation/:simulationId/start',
     name: 'SimulationRun',
     component: SimulationRunView,
-    props: true
+    props: true,
+    meta: { requiresAuth: true }
   },
   {
     path: '/report/:reportId',
     name: 'Report',
     component: ReportView,
-    props: true
+    props: true,
+    meta: { requiresAuth: true }
   },
   {
     path: '/interaction/:reportId',
     name: 'Interaction',
     component: InteractionView,
-    props: true
+    props: true,
+    meta: { requiresAuth: true }
   }
 ]
 
 const router = createRouter({
   history: createWebHistory(),
   routes
+})
+
+router.beforeEach((to, from, next) => {
+  const token = localStorage.getItem('token')
+  
+  if (to.meta.requiresAuth && !token) {
+    next('/auth')
+  } else if (to.path === '/auth' && token) {
+    next('/')
+  } else {
+    next()
+  }
 })
 
 export default router

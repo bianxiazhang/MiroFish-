@@ -13,6 +13,13 @@ dependencies = [
     "flask>=3.0.0",
     "flask-cors>=6.0.0",
     
+    # 数据库
+    "sqlalchemy>=2.0.0",
+    
+    # 认证相关
+    "passlib[bcrypt]>=1.7.4",
+    "python-jose[cryptography]>=3.3.0",
+    
     # LLM 相关
     "openai>=1.0.0",
     
